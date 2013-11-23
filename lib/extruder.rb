@@ -30,18 +30,21 @@ module Extruder
     end
   end
 
-  class Queue
-    def initialize(directory)
-      @location = directory
-    end
-
+  class Store
     def create
       Dir.mkdir(@location, 0755)
-      Dir.mkdir("#{@location}/queue", 0755)
+      Dir.mkdir("#{@location}/#{@type}", 0755)
       (0..255).each { |x|
-        Dir.mkdir("#{@location}/queue/#{"%02x" % x}", 01773)
+        Dir.mkdir("#{@location}/#{@type}/#{"%02x" % x}", 01773)
       }
-      Dir.mkdir("#{@location}/queue/tmp", 03733)
+      Dir.mkdir("#{@location}/#{@type}/tmp", 03733)
+    end
+  end
+
+  class Queue < Store
+    def initialize(directory)
+      @location = directory
+      @type = "queue"
     end
 
     def inject(item, tags)
@@ -59,11 +62,11 @@ module Extruder
       end
       hexdigest = digest.digest.unpack('H*')[0]
       dir, name = hexdigest[0..1], hexdigest[2..64]
-      destination = "#{@location}/queue/#{dir}/#{name}"
+      destination = "#{@location}/#{@type}/#{dir}/#{name}"
       File.rename(file.path, destination)
-      metafile = Tempfile.new('metadata', "#{@location}/queue/tmp")
+      metafile = Tempfile.new('metadata', "#{@location}/#{@type}/tmp")
       metafile << JSON.generate({tags: tags})
-      File.rename(file.path, "#{destination}.meta")
+      File.rename(metafile.path, "#{destination}.meta")
     end
   end
 end
