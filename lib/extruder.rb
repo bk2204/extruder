@@ -45,14 +45,15 @@ module Extruder
     def each
       location = "#{@location}/#{@type}"
       (0..255).each do |x|
-        dir = Dir("#{location}/" + "%02x" % x)
+        dir = Dir.new("#{location}/" + "%02x" % x)
         json_opts = {create_additions: false, symbolize_names: true}
 
         # TODO: validate the SHA-256 value.
-        files = dir.each.sort.select { |file| /[0-9a-f]{62}/ =~ file }
+        files = dir.each.sort.select { |file| /\A[0-9a-f]{62}\z/ =~ file }
         files.each do |file|
+          file = "#{dir.path}/#{file}"
           hash = {message: Mail.read(file),
-                  metadata: JSON.load(File.new("#{file}.meta"), json_opts)}
+                  metadata: JSON.load(File.new("#{file}.meta"), nil, json_opts)}
           yield hash
         end
       end
