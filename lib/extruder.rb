@@ -3,6 +3,8 @@ require 'openssl'
 require 'tempfile'
 require 'yaml'
 
+require 'extruder/processor'
+
 module Extruder
 
   # This class holds configuration data for Extruder.
@@ -20,6 +22,13 @@ module Extruder
       [:queue].each { |x|
         @locations[x] = config['locations'][x.to_s]
       }
+      @processors = config['processors'].map { |x|
+        result = {}
+        [:require, :name, :args, :config].each { |option|
+          result[option] = x[option.to_s]
+        }
+        result
+      }
     end
 
     # Get the file system location for the given component.
@@ -27,6 +36,13 @@ module Extruder
     # Currently, the only valid component is :queue.
     def location(type)
       @locations[type]
+    end
+
+    # Get the list of processors.
+    #
+    # Processors will be run in the order that they are specified here.
+    def processors
+      @processors
     end
   end
 
