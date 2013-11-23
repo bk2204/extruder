@@ -1,0 +1,44 @@
+#!/usr/bin/ruby
+
+require 'mail'
+require 'optparse'
+require 'extruder'
+
+options = {config: []}
+process = nil
+split_on = "\n"
+
+OptionParser.new do |opts|
+  opts.banner = 'Usage: extruder-process [-q [-c config-file] | -F [-0]]'
+
+  opts.on('-c', '--config-file CONFIG-FILE') do |file|
+    options[:config] = file
+  end
+
+  opts.on('-q', '--queue') do
+    process = 'queue'
+  end
+
+  opts.on('-F', '--from-file') do
+    process = 'file'
+  end
+
+  opts.on('-0') do
+    split_on = "\0"
+  end
+end.parse!
+
+config = Extruder::Config.new options[:config]
+case process
+  when 'queue'
+    items = Extruder::Queue.new config.location(:queue)
+  when 'file'
+    files = $stdin.read.split(split_on)
+    items = files.map { |f| {message: Mail.read(f), metadata:{}}}
+  else
+    files = ARGV
+    items = files.map { |f| {message: Mail.read(f), metadata:{}}}
+end
+
+runner = Extruder::QueueRunner.new config
+runner.process(items)
