@@ -50,7 +50,7 @@ module Extruder
     def inject(item, tags)
       file = Tempfile.new('item', "#{@location}/queue/tmp")
       digest = OpenSSL::Digest::SHA256.new
-      if item.respond_to?(each)
+      if item.respond_to?(:each)
         item.each { |x| 
           digest << x
           file << x
