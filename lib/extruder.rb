@@ -31,6 +31,8 @@ module Extruder
   end
 
   class Store
+    include Enumerable
+
     def create
       Dir.mkdir(@location, 0755)
       Dir.mkdir("#{@location}/#{@type}", 0755)
@@ -38,6 +40,22 @@ module Extruder
         Dir.mkdir("#{@location}/#{@type}/#{"%02x" % x}", 01773)
       }
       Dir.mkdir("#{@location}/#{@type}/tmp", 03733)
+    end
+
+    def each
+      location = "#{@location}/#{@type}"
+      (0..255).each do |x|
+        dir = Dir("#{location}/" + "%02x" % x)
+        json_opts = {create_additions: false, symbolize_names: true}
+
+        # TODO: validate the SHA-256 value.
+        files = dir.each.sort.select { |file| /[0-9a-f]{62}/ =~ file }
+        files.each do |file|
+          hash = {message: Mail.read(file),
+                  metadata: JSON.load(File.new("#{file}.meta"), json_opts)}
+          yield hash
+        end
+      end
     end
   end
 
