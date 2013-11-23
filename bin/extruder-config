@@ -1,0 +1,18 @@
+#!/usr/bin/ruby
+
+require 'optparse'
+require 'extruder'
+
+options = {}
+
+OptionParser.new do |opts|
+  opts.banner = "Usage: extruder-inject [-c config-file] [-t tag]..."
+
+  opts.on("-c", "--config-file CONFIG-FILE") do |file|
+    options[:config] = file
+  end
+end.parse!
+
+config = Extruder::Config.new options[:config]
+queue = Extruder::Queue.new config.location(:queue)
+queue.create
