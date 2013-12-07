@@ -5,7 +5,7 @@ module Extruder
     class PostfixReceivedProcessor < ReceivedProcessor
       def process(msg)
         initialize_metadata(msg)
-        each_received(msg) do |header, metadata|
+        each_received(msg) do |header|
           header = header.to_s
 
           if header =~ /from\s+
@@ -19,8 +19,12 @@ module Extruder
             id\s+(?<queueid>\S+)\s+
             (?:for\s+<(?<destaddress>[^>]+)>)?/x
 
+            metadata = {}
             $~.names.each { |x| metadata[x.to_sym] = $~[x] }
             metadata[:protocol] ||= "IPv4"
+            metadata
+          else
+            nil
           end
         end
       end

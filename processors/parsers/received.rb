@@ -8,16 +8,29 @@ module Extruder
         end
       end
 
+      # Processes each received header.
+      #
+      # Takes a block with a single argument, the received header.  That block
+      # should return a hash with metadata if the processor could extract it,
+      # nil otherwise.
       def each_received(msg)
         received = msg.message.received
         if received.is_a?(Array)
-          received.each_index { |i| yield received[i], msg.metadata[:received][i] }
+          received.each_index do |i|
+            update_metadata(msg, i, yield(received[i]))
+          end
         else
-          yield received, msg.metadata[:received][0]
+          update_metadata(msg, 0, yield(received))
         end
       end
 
       private
+      def update_metadata(msg, i, metadata)
+        if !metadata.nil?
+          msg.metadata[:received][i] = metadata
+        end
+      end
+
       def message_count(msg)
         received = msg.message.received
         if received.is_a?(Array)
