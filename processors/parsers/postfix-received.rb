@@ -17,7 +17,7 @@ module Extruder
             by\s(?<server>\S+)\s\(Postfix\)\s+
             with\s+(?<smtpprotocol>\S+)\s+
             id\s+(?<queueid>\S+)\s+
-            for\s+<(?<destaddress>[^>]+)>/x
+            (?:for\s+<(?<destaddress>[^>]+)>)?/x
 
             $~.names.each { |x| metadata[x.to_sym] = $~[x] }
             metadata[:protocol] ||= "IPv4"
