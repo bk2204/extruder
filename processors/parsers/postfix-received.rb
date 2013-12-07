@@ -1,8 +1,8 @@
 module Extruder
   module Parser
     class PostfixReceivedProcessor
-      def process(msg, metadata)
-        first = extract_first(msg).to_s
+      def process(msg)
+        first = extract_first(msg.message).to_s
         if first =~ /from\s+
           (?<heloname>\S+)\s+
           \((?:(?<rdns>\S+)\s+)?
@@ -14,12 +14,10 @@ module Extruder
           id\s+(?<queueid>\S+)\s+
           for\s+<(?<destaddress>[^>]+)>/x
 
-          metadata[:received] = {}
-          $~.names.each { |x| metadata[:received][x.to_sym] = $~[x] }
-          metadata[:received][:protocol] ||= "IPv4"
+          msg.metadata[:received] = {}
+          $~.names.each { |x| msg.metadata[:received][x.to_sym] = $~[x] }
+          msg.metadata[:received][:protocol] ||= "IPv4"
         end
-
-        metadata
       end
 
       private

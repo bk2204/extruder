@@ -37,10 +37,10 @@ case process
     items = Extruder::Queue.new config.location(:queue)
   when 'file'
     files = $stdin.read.split(split_on)
-    items = files.map { |f| {message: Mail.read(f), metadata:{}}}
+    items = files.map { |f| Extruder::Message.new File.open(f).read, {} }
   else
     files = ARGV
-    items = files.map { |f| {message: Mail.read(f), metadata:{}}}
+    items = files.map { |f| Extruder::Message.new File.open(f).read, {} }
 end
 
 runner = Extruder::QueueRunner.new config

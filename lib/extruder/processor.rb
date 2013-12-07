@@ -11,9 +11,8 @@ module Extruder
 
     def process(items)
       items.each do |item|
-        metadata = item[:metadata]
         @processors.each do |processor|
-          metadata = processor.process(item[:message], metadata)
+          processor.process(item)
         end
       end
     end
