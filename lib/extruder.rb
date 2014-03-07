@@ -121,7 +121,7 @@ module Extruder
       file = Tempfile.new('item', "#{@location}/queue/tmp")
       digest = OpenSSL::Digest::SHA256.new
       if item.respond_to?(:each)
-        item.each { |x| 
+        item.each { |x|
           digest << x
           file << x
         }
