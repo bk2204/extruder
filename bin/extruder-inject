@@ -15,8 +15,8 @@ OptionParser.new do |opts|
     options[:config] = file
   end
 
-  opts.on("-t", "--tag TAG") do |tag|
-    options[:tag] << tag
+  opts.on("-t", "--tag TAG") do |arg|
+    arg.split(',').each { |tag| options[:tag] << tag }
   end
 end.parse!
 
