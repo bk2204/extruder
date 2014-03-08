@@ -9,10 +9,26 @@ module Extruder
       load_processors
     end
 
+    def run(items)
+      items = items.to_a
+      process items
+      postprocess items
+    end
+
     def process(items)
+      processors = @processors.each.select { |p| p.respond_to? :process }
       items.each do |item|
-        @processors.each do |processor|
+        processors.each do |processor|
           processor.process(item)
+        end
+      end
+    end
+
+    def postprocess(items)
+      results = {}
+      @processors.each do |processor|
+        if processor.respond_to? :postprocess
+          results.merge!(processor.postprocess(items, results) || {})
         end
       end
     end

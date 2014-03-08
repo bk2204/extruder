@@ -44,4 +44,4 @@ case process
 end
 
 runner = Extruder::QueueRunner.new config
-runner.process(items)
+runner.run(items)
