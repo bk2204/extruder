@@ -26,6 +26,22 @@ module Extruder
       end
 
       protected
+      # Computes the minimal set of ranges based on a hash of ranges to
+      # collections of items.
+      #
+      # The algorithm is to sort the ranges into the smallest ranges first, then
+      # for each range in that set:
+      #
+      #   * If another range we've already seen subsumes it, do nothing.
+      #   * Otherwise, if this range subsumes one we've already seen and this
+      #     one has more items than the other one, remove the other one and add
+      #     this one.
+      #   * Otherwise, if this range subsumes one we've already seen and it has
+      #     the same number of items, do nothing.
+      #   * Otherwise, this is a unique range, and we should add it one.
+      #
+      # @param range_map [Hash] map of IPAddr ranges to a collection with #size
+      # @returns [Set] a minimal set of ranges
       def compute_minimal_ranges(range_map)
         ranges = Set.new range_map.select { |k, v|
           k.ipv4? && v.size >= @netmask_threshold
