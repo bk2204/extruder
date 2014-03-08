@@ -13,19 +13,24 @@ module Extruder
       end
 
       def postprocess(msgs, results)
-        ranges = Set.new results[:address_ranges].select { |k, v|
+        range_map = results[:address_ranges]
+        ranges = Set.new range_map.select { |k, v|
           k.ipv4? && v.size >= @netmask_threshold
         }.keys
 
         minimized = Set.new
-        ranges.each do |r|
+        ranges.to_a.sort { |a, b| b.mask_addr <=> a.mask_addr }.each do |r|
           ignore = false
           minimized.each do |s|
-            if s.include? r
+            if s.include?(r)
               ignore = true
               break
-            elsif r.include? s
-              minimized.remove(s)
+            elsif r.include?(s)
+              if range_map[r].size > range_map[s].size
+                minimized.delete(s)
+              else
+                ignore = true
+              end
             end
           end
           minimized << r unless ignore
@@ -34,8 +39,8 @@ module Extruder
         minimized.sort.each do |r|
           address = r.to_s
           invmask = (~r.mask_addr & 0xffffffff) + 1
-          prefix = Math.log2(invmask).to_i
-          puts "#{address}/#{prefix}\tREJECT #{@reject_reason}"
+          prefix = 32 - Math.log2(invmask).to_i
+          puts "#{address}/#{prefix}\t\tREJECT #{@reject_reason}"
         end
 
         nil
