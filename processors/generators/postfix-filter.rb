@@ -13,7 +13,20 @@ module Extruder
       end
 
       def postprocess(msgs, results)
-        range_map = results[:address_ranges]
+        minimized = compute_minimal_ranges(results[:address_ranges])
+
+        minimized.sort.each do |r|
+          address = r.to_s
+          invmask = (~r.mask_addr & 0xffffffff) + 1
+          prefix = 32 - Math.log2(invmask).to_i
+          puts "#{address}/#{prefix}\t\tREJECT #{@reject_reason}"
+        end
+
+        nil
+      end
+
+      protected
+      def compute_minimal_ranges(range_map)
         ranges = Set.new range_map.select { |k, v|
           k.ipv4? && v.size >= @netmask_threshold
         }.keys
@@ -36,14 +49,7 @@ module Extruder
           minimized << r unless ignore
         end
 
-        minimized.sort.each do |r|
-          address = r.to_s
-          invmask = (~r.mask_addr & 0xffffffff) + 1
-          prefix = 32 - Math.log2(invmask).to_i
-          puts "#{address}/#{prefix}\t\tREJECT #{@reject_reason}"
-        end
-
-        nil
+        minimized
       end
     end
   end
