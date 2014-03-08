@@ -19,7 +19,8 @@ module Extruder
           address = r.to_s
           invmask = (~r.mask_addr & 0xffffffff) + 1
           prefix = 32 - Math.log2(invmask).to_i
-          puts "#{address}/#{prefix}\t\tREJECT #{@reject_reason}"
+          cidr = "#{address}/#{prefix}"
+          puts "#{cidr}\t\tREJECT #{@reject_reason} (#{cidr})"
         end
 
         nil
