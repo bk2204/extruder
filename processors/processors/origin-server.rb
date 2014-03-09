@@ -21,7 +21,7 @@ module Extruder
           end
         end
 
-        msg.metadata[:originserver] = origin.dup || nil
+        msg.metadata[:originserver] = origin ? origin.dup : nil
       end
 
       private
