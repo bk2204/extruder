@@ -17,8 +17,7 @@ module Extruder
 
         minimized.sort.each do |r|
           address = r.to_s
-          invmask = (~r.mask_addr & 0xffffffff) + 1
-          prefix = 32 - Math.log2(invmask).to_i
+          prefix = compute_prefix(r.mask_addr)
           cidr = "#{address}/#{prefix}"
           puts "#{cidr}\t\tREJECT #{@reject_reason} (#{cidr})"
         end
@@ -27,6 +26,12 @@ module Extruder
       end
 
       protected
+      def compute_prefix(mask_addr)
+        invmask = (~mask_addr & 0xffffffff) + 1
+        prefix = 32 - Math.log2(invmask).to_i
+        prefix
+      end
+
       # Computes the minimal set of ranges based on a hash of ranges to
       # collections of items.
       #
