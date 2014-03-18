@@ -1,5 +1,6 @@
 require 'json'
 require 'openssl'
+require 'singleton'
 require 'tempfile'
 require 'yaml'
 
@@ -137,6 +138,39 @@ module Extruder
       metafile = Tempfile.new('metadata', "#{@location}/#{@type}/tmp")
       metafile << JSON.generate({tags: tags})
       File.rename(metafile.path, "#{destination}.meta")
+    end
+  end
+
+  class ProcessorRegistry
+    include Singleton
+    include Enumerable
+
+    def initialize
+      @processors = {}
+    end
+
+    # Register a processor.
+    #
+    # @param klass the processor class object
+    # @param name [String, Symbol] an identifier by which the processor can be
+    #   looked up
+    # @param type [:generator, :processor, :parser] the type of processor
+    def register(klass, name, type)
+      @processors[name] = {:class => klass, :name => name, :type => type}
+    end
+
+    # Iterate over the processors
+    def each
+      @processors.each { |x| yield x.dup }
+    end
+
+    # Look up a processor by name.
+    #
+    # @param name [String, Symbol] the name of the processor
+    # @return [Class, nil] the processor's class or nil if not found
+    def lookup(name)
+      result = @processors[name]
+      result ? result[:class] : nil
     end
   end
 end
