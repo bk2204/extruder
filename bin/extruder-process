@@ -7,7 +7,7 @@ require 'mail'
 require 'optparse'
 require 'extruder'
 
-options = {config: []}
+options = {config: [], processors: []}
 process = nil
 split_on = "\n"
 
@@ -16,6 +16,10 @@ OptionParser.new do |opts|
 
   opts.on('-c', '--config-file CONFIG-FILE') do |file|
     options[:config] = file
+  end
+
+  opts.on('-p', '--processor PROCESSOR-NAME') do |name|
+    options[:processors] << name
   end
 
   opts.on('-q', '--queue') do
