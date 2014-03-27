@@ -3,9 +3,9 @@
 $:.unshift File.join(File.dirname(__FILE__), '..', 'lib')
 $:.unshift File.join(File.dirname(__FILE__), '..', 'processors')
 
-require 'mail'
 require 'optparse'
 require 'extruder'
+require 'extruder/mail'
 
 options = {config: [], processors: []}
 process = nil

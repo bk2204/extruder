@@ -1,5 +1,4 @@
 require 'json'
-require 'mail'
 
 module Extruder
   class QueueRunner
