@@ -2,14 +2,11 @@ require 'mail'
 
 module Extruder
   class Message
-    attr_accessor :message, :metadata, :digest
+    attr_accessor :metadata, :digest
+    attr_writer :message
 
     def initialize(msg, metadata, digest = nil)
-      if msg.is_a?(String)
-        @message = Mail.new msg
-      else
-        @message = msg
-      end
+      @message = msg
       @metadata = metadata
       if digest.nil?
         if msg.is_a?(String)
@@ -30,6 +27,16 @@ module Extruder
 
     def digest_as_hex
       @digest.unpack('H*')[0]
+    end
+
+    def message
+      if @message.is_a?(String)
+        @message = Mail.read(@message)
+      elsif @message.is_a?(Mail::Message)
+        @message
+      elsif @message.respond_to? :read
+        @message = Mail.read_from_string(@message.read)
+      end
     end
   end
 
@@ -56,7 +63,7 @@ module Extruder
         files.each do |component|
           file = "#{dir.path}/#{component}"
           metadata = JSON.load(File.new("#{file}.meta"), nil, json_opts)
-          m = Message.new Mail.read(file), metadata, "#{piece}#{component}"
+          m = Message.new file, metadata, "#{piece}#{component}"
           @messages << m
           yield m
         end
