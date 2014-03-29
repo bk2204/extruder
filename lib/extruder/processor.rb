@@ -34,9 +34,20 @@ module Extruder
 
     private
       def load_processors
+        @config.location(:processors).each do |l|
+          ["processors", "parsers", "generators"].each do |d|
+            dirname = File.join(l, "processors", d)
+            Dir.foreach(dirname) do |f|
+              next if f.start_with?(".")
+              next unless f.end_with?(".rb")
+
+              load File.join(dirname, f)
+            end
+          end
+        end
+
         @processors = @config.processors.map do |x|
-          require x[:require]
-          klass = x[:name].split('::').inject(Object) { |o,c| o.const_get c }
+          klass = ProcessorRegistry.instance.lookup(x[:name])
           klass.new(*x[:args])
         end
       end

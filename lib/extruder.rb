@@ -20,7 +20,7 @@ module Extruder
 
       config = YAML.load_file(filename)
       @locations = {}
-      [:queue].each { |x|
+      [:queue, :processors].each { |x|
         @locations[x] = config['locations'][x.to_s]
       }
       @processors = config['processors'].map { |x|
