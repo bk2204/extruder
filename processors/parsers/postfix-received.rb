@@ -29,5 +29,7 @@ module Extruder
         end
       end
     end
+    ProcessorRegistry.instance.register(PostfixReceivedProcessor,
+                                        "postfix-received", :parser)
   end
 end

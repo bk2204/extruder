@@ -1,6 +1,10 @@
 module Extruder
   module Generator
     class DebugProcessor
+      def self.type
+        :generator
+      end
+
       def process(msg)
         puts [msg.digest_as_hex, msg.metadata].inspect
       end

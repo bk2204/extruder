@@ -1,6 +1,10 @@
 module Extruder
   module Parser
     class ReceivedProcessor
+      def self.type
+        :parser
+      end
+
       def initialize_metadata(msg)
         if !msg.metadata.key?(:received)
           msg.metadata[:received] = []

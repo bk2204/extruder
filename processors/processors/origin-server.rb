@@ -1,6 +1,10 @@
 module Extruder
   module Processor
     class OriginServerProcessor
+      def self.type
+        :processor
+      end
+
       def initialize(patterns)
         @patterns = patterns.map { |pat| Regexp.compile(pat) }
       end

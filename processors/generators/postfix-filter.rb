@@ -7,6 +7,10 @@ end
 module Extruder
   module Generator
     class PostfixFilterProcessor
+      def self.type
+        :generator
+      end
+
       def initialize(params)
         @netmask_threshold = params["netmask_threshold"]
         @reject_reason = params["reject_reason"]
