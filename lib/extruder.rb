@@ -10,6 +10,7 @@ module Extruder
 
   # This class holds configuration data for Extruder.
   class Config
+    attr_reader :processors
 
     # Load the configuration from the given file, or if no file is given, the
     # default configuration file.
@@ -37,13 +38,6 @@ module Extruder
     # Currently, the only valid component is :queue.
     def location(type)
       @locations[type]
-    end
-
-    # Get the list of processors.
-    #
-    # Processors will be run in the order that they are specified here.
-    def processors
-      @processors
     end
   end
 
