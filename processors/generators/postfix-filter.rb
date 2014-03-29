@@ -78,6 +78,9 @@ module Extruder
         minimized
       end
     end
+
+    ProcessorRegistry.instance.register(PostfixFilterProcessor,
+                                        "postfix-filter")
   end
 end
 

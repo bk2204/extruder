@@ -107,13 +107,13 @@ module Extruder
     # @param name [String, Symbol] an identifier by which the processor can be
     #   looked up
     # @param type [:generator, :processor, :parser] the type of processor
-    def register(klass, name, type)
-      @processors[name] = {:class => klass, :name => name, :type => type}
+    def register(klass, name)
+      @processors[name] = klass
     end
 
     # Iterate over the processors
     def each
-      @processors.each { |x| yield x.dup }
+      @processors.each { |x| yield x }
     end
 
     # Look up a processor by name.
@@ -121,8 +121,7 @@ module Extruder
     # @param name [String, Symbol] the name of the processor
     # @return [Class, nil] the processor's class or nil if not found
     def lookup(name)
-      result = @processors[name]
-      result ? result[:class] : nil
+      @processors[name]
     end
   end
 end

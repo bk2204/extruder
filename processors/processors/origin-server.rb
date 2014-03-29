@@ -33,5 +33,7 @@ module Extruder
         @patterns.none? { |pat| pat =~ server }
       end
     end
+
+    ProcessorRegistry.instance.register(OriginServerProcessor, "origin-server")
   end
 end

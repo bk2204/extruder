@@ -28,6 +28,8 @@ module Extruder
         { address_ranges: groups }
       end
     end
+
+    ProcessorRegistry.instance.register(NetmaskProcessor, "netmask")
   end
 end
 
