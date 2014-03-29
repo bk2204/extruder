@@ -62,6 +62,25 @@ module Extruder
       }
       Dir.mkdir("#{@location}/#{@type}/tmp", 03733)
     end
+
+    protected
+    def location
+      File.join(@location, @type)
+    end
+
+    def dirname(m)
+      if m.respond_to? :digest_as_hex
+        piece = m.digest_as_hex
+      else
+        piece = m
+      end
+      File.join(location, piece[0..1])
+    end
+
+    def filename(m)
+      digest = m.digest_as_hex
+      File.join(dirname(digest), digest[2..-1])
+    end
   end
 
   class Queue < Store

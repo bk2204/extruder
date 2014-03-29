@@ -39,10 +39,16 @@ module Extruder
     def each
       require 'mail'
 
-      location = "#{@location}/#{@type}"
+      if !@messages.nil?
+        @messages.each { |x| yield x }
+        return
+      end
+
+      @messages = []
+
       (0..255).each do |x|
         piece = "%02x" % x
-        dir = Dir.new("#{location}/#{piece}")
+        dir = Dir.new(dirname(piece))
         json_opts = {create_additions: false, symbolize_names: true}
 
         # TODO: validate the SHA-256 value.
@@ -50,8 +56,19 @@ module Extruder
         files.each do |component|
           file = "#{dir.path}/#{component}"
           metadata = JSON.load(File.new("#{file}.meta"), nil, json_opts)
-          yield Message.new Mail.read(file), metadata, "#{piece}#{component}"
+          m = Message.new Mail.read(file), metadata, "#{piece}#{component}"
+          @messages << m
+          yield m
         end
+      end
+    end
+
+    def save_metadata
+      return unless @messages
+
+      @messages.each do |m|
+        f = File.new("#{filename(m)}.meta", "w")
+        JSON.dump(m.metadata, f)
       end
     end
   end
