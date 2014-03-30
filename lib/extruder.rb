@@ -10,11 +10,11 @@ module Extruder
 
   # This class holds configuration data for Extruder.
   class Config
-    attr_reader :processors
+    attr_reader :processors, :cache_tag
 
     # Load the configuration from the given file, or if no file is given, the
     # default configuration file.
-    def initialize(filename = nil)
+    def initialize(filename = nil, options = {})
       if filename.nil?
         filename = '/etc/extruder/extruder.conf'
       end
@@ -31,6 +31,7 @@ module Extruder
         }
         result
       }
+      @cache_tag = options[:cache_tag]
     end
 
     # Get the file system location for the given component.

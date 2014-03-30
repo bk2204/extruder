@@ -12,6 +12,15 @@ module Extruder
       items = items.to_a
       process items
       postprocess items
+
+      tag = @config.cache_tag
+      if tag
+        items.each do |item|
+          cta = item.metadata[:cache_tag] ||= []
+          cta << tag
+          cta.uniq!
+        end
+      end
     end
 
     def process(items)

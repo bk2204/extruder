@@ -7,7 +7,23 @@ require 'optparse'
 require 'extruder'
 require 'extruder/mail'
 
-options = {config: [], processors: [], save: false}
+def selected_items(items, options)
+  tag = options[:cache_tag]
+  cached = options[:cached]
+
+  # If no tag is provided, select every item; otherwise, select all items
+  # where the tag matches if cached is true, and every item where the tag
+  # does not match if it is false.
+  items.select do |item|
+    !tag || ((item.metadata[:cache_tag].include?(tag)) ^ !cached)
+  end
+end
+
+options = {
+  config: [],
+  processors: [],
+  save: false,
+}
 process = nil
 split_on = "\n"
 
@@ -30,6 +46,18 @@ OptionParser.new do |opts|
     process = 'queue'
   end
 
+  opts.on('--cached-only') do
+    options[:cached] = true
+  end
+
+  opts.on('--uncached-only') do
+    options[:cached] = false
+  end
+
+  opts.on('-T', '--cache-tag TAG') do |tag|
+    options[:cache_tag] = tag
+  end
+
   opts.on('-F', '--from-file') do
     process = 'file'
   end
@@ -39,7 +67,7 @@ OptionParser.new do |opts|
   end
 end.parse!
 
-config = Extruder::Config.new options[:config]
+config = Extruder::Config.new options[:config], options
 case process
   when 'queue'
     items = Extruder::Queue.new config.location(:queue)
@@ -52,7 +80,7 @@ case process
 end
 
 runner = Extruder::QueueRunner.new config
-runner.run(items)
+runner.run(selected_items(items, options))
 
 if options[:save]
   items.save_metadata
