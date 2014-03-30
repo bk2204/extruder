@@ -15,7 +15,7 @@ def selected_items(items, options)
   # where the tag matches if cached is true, and every item where the tag
   # does not match if it is false.
   items.select do |item|
-    !tag || ((item.metadata[:cache_tag].include?(tag)) ^ !cached)
+    !tag || (((item.metadata[:cache_tag] || []).include?(tag)) ^ !cached)
   end
 end
 
