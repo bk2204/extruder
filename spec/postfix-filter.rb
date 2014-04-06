@@ -29,4 +29,19 @@ describe Extruder::Generator::PostfixFilterProcessor do
       expect(p.send(:compute_prefix, x)).to eq (32 - n)
     end
   end
+
+  it "can compute a set of minimal IPv4 ranges" do
+    p = Extruder::Generator::PostfixFilterProcessor.new({ "netmask_threshold" => 1})
+    range_map = {}
+    [
+      "192.168.2.1/32",
+      "192.168.2.254/32",
+      "192.168.2.128/25",
+    ].each do |r|
+      range_map[IPAddr.new(r)] = [1, 2]
+    end
+    range_map[IPAddr.new("192.168.2.0/24")] = [1, 2, 3, 4, 5, 6]
+    result = Set.new([IPAddr.new("192.168.2.0/24")])
+    expect(p.send(:compute_minimal_ranges, range_map)).to eq result
+  end
 end
