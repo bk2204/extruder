@@ -27,6 +27,7 @@ module Extruder
       @processors = config['processors'].map { |x|
         result = {}
         [:require, :name, :args, :config].each { |option|
+          next unless x.key? option.to_s
           result[option] = x[option.to_s]
         }
         result
