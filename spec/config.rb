@@ -29,4 +29,15 @@ EOM
     expect(c.location(:processors)).to eq @proc_location
     expect(c.processors).to eq [{name: 'netmask'}]
   end
+
+  it 'should have no cache tag by default' do
+    c = Extruder::Config.new(@tempfile.path)
+    expect(c.cache_tag).to eq nil
+  end
+
+  it 'should return a cache tag when one is provided' do
+    tag = 'abcdef'
+    c = Extruder::Config.new(@tempfile.path, {cache_tag: tag})
+    expect(c.cache_tag).to eq tag
+  end
 end
