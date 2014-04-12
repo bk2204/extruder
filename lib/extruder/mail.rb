@@ -44,8 +44,6 @@ module Extruder
     include Enumerable
 
     def each
-      require 'mail'
-
       if !@messages.nil?
         @messages.each { |x| yield x }
         return
