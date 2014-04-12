@@ -40,4 +40,10 @@ EOM
     c = Extruder::Config.new(@tempfile.path, {cache_tag: tag})
     expect(c.cache_tag).to eq tag
   end
+
+  it 'should raise an exception if the file does not exist' do
+    expect {
+      Extruder::Config.new("/nonexistent")
+    }.to raise_error Errno::ENOENT
+  end
 end
