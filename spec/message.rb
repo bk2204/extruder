@@ -59,4 +59,15 @@ EOM
     expect(m.digest).to eq @digest
     expect(m.digest_as_hex).to eq @hex_digest
   end
+
+  it 'should return a message when passed a message' do
+    m = Extruder::Message.new(@parsed, {}, @hex_digest)
+    expect(m.message).to be_a Mail::Message
+  end
+
+  it 'should return a message when passed an IO object' do
+    io = StringIO.new(@message)
+    m = Extruder::Message.new(io, {}, @hex_digest)
+    expect(m.message).to be_a Mail::Message
+  end
 end
