@@ -31,7 +31,7 @@ module Extruder
 
     def message
       if @message.is_a?(String)
-        @message = Mail.read(@message)
+        @message = Mail.read_from_string(@message)
       elsif @message.is_a?(Mail::Message)
         @message
       elsif @message.respond_to? :read
@@ -61,7 +61,7 @@ module Extruder
         files.each do |component|
           file = "#{dir.path}/#{component}"
           metadata = JSON.load(File.new("#{file}.meta"), nil, json_opts)
-          m = Message.new file, metadata, "#{piece}#{component}"
+          m = Message.new File.new(file), metadata, "#{piece}#{component}"
           @messages << m
           yield m
         end
