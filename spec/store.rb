@@ -26,7 +26,6 @@ describe Extruder::Store do
   end
 
   it 'should create a directory structure' do
-    pending "Can't create a setgid directory"
     path = File.join(@tempdir, 'queue')
     s = ExampleStore.new path
     s.create
@@ -38,7 +37,7 @@ describe Extruder::Store do
       umask = File.umask
       files.each do |file|
         st = File::stat(file)
-        expect(st.mode & 07777).to eq mode & ~umask & 07777
+        expect(st.mode & ~umask & 07777).to eq mode & ~umask & 07777
         expect(st.directory?).to eq true
       end
     end

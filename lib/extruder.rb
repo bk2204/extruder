@@ -56,7 +56,9 @@ module Extruder
       (0..255).each { |x|
         Dir.mkdir("#{@location}/#{@type}/#{"%02x" % x}", 01773)
       }
-      Dir.mkdir("#{@location}/#{@type}/tmp", 03733)
+      tmpdir = "#{@location}/#{@type}/tmp"
+      Dir.mkdir(tmpdir, 03733)
+      File.chmod(03733, tmpdir)
     end
 
     protected
