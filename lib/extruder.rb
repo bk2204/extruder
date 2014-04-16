@@ -52,11 +52,12 @@ module Extruder
 
     def create
       Dir.mkdir(@location, 0755)
-      Dir.mkdir("#{@location}/#{@type}", 0755)
+      typedir = File.join(@location, @type)
+      Dir.mkdir(typedir, 0755)
       (0..255).each { |x|
-        Dir.mkdir("#{@location}/#{@type}/#{"%02x" % x}", 01773)
+        Dir.mkdir(File.join(typedir, "%02x" % x), 01773)
       }
-      tmpdir = "#{@location}/#{@type}/tmp"
+      tmpdir = File.join(typedir, "tmp")
       Dir.mkdir(tmpdir, 03733)
       File.chmod(03733, tmpdir)
     end
