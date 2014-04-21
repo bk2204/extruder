@@ -37,7 +37,7 @@ describe Extruder::Store do
       umask = File.umask
       files.each do |file|
         st = File::stat(file)
-        expect(st.mode & ~umask & 07777).to eq mode & ~umask & 07777
+        expect(st.mode & 07777).to eq mode & ~umask & 07777
         expect(st.directory?).to eq true
       end
     end

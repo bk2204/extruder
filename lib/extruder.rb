@@ -59,7 +59,7 @@ module Extruder
       }
       tmpdir = File.join(typedir, "tmp")
       Dir.mkdir(tmpdir, 03733)
-      File.chmod(03733, tmpdir)
+      File.chmod(03733 & ~File.umask, tmpdir)
     end
 
     protected
