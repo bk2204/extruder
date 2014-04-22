@@ -60,6 +60,18 @@ EOM
     expect(m.digest_as_hex).to eq @hex_digest
   end
 
+  it 'should reject digests of the wrong length' do
+    expect {
+      Extruder::Message.new(@parsed, {}, 'abcd')
+    }.to raise_error Extruder::InvalidDigestError
+  end
+
+  it 'should reject digests with invalid content' do
+    expect {
+      Extruder::Message.new(@parsed, {}, 'G' * 64)
+    }.to raise_error Extruder::InvalidDigestError
+  end
+
   it 'should return a message when passed a string' do
     m = Extruder::Message.new(@message, {}, @hex_digest)
     expect(m.message).to be_a Mail::Message
