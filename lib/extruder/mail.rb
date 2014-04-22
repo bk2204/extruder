@@ -8,6 +8,25 @@ module Extruder
     def initialize(msg, metadata, digest = nil)
       @message = msg
       @metadata = metadata
+      set_digest(msg, digest)
+    end
+
+    def digest_as_hex
+      @digest.unpack('H*')[0]
+    end
+
+    def message
+      if @message.is_a?(String)
+        @message = Mail.read_from_string(@message)
+      elsif @message.is_a?(Mail::Message)
+        @message
+      elsif @message.respond_to? :read
+        @message = Mail.read_from_string(@message.read)
+      end
+    end
+
+    private
+    def set_digest(msg, digest)
       if digest.nil?
         if msg.is_a?(String)
           hash = OpenSSL::Digest::SHA256.new
@@ -25,20 +44,6 @@ module Extruder
         @digest = [digest].pack("H*")
       else
         raise InvalidDigestError.new "digest must be a valid SHA-256 value"
-      end
-    end
-
-    def digest_as_hex
-      @digest.unpack('H*')[0]
-    end
-
-    def message
-      if @message.is_a?(String)
-        @message = Mail.read_from_string(@message)
-      elsif @message.is_a?(Mail::Message)
-        @message
-      elsif @message.respond_to? :read
-        @message = Mail.read_from_string(@message.read)
       end
     end
   end
