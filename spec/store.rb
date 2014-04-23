@@ -3,6 +3,7 @@
 
 $:.unshift File.join(File.dirname(__FILE__), '..', 'lib')
 
+require 'openssl'
 require 'tmpdir'
 
 require 'extruder'
@@ -16,9 +17,18 @@ class ExampleStore < Extruder::Store
   end
 end
 
+class TestMessage
+  attr :digest_as_hex
+
+  def initialize(digest)
+    @digest_as_hex = digest
+  end
+end
+
 describe Extruder::Store do
   before(:all) do
     @tempdir = Dir.mktmpdir
+    @path = File.join(@tempdir, 'queue')
   end
 
   after(:all) do
@@ -26,7 +36,7 @@ describe Extruder::Store do
   end
 
   it 'should create a directory structure' do
-    path = File.join(@tempdir, 'queue')
+    path = @path
     s = ExampleStore.new path
     s.create
     [
@@ -41,5 +51,31 @@ describe Extruder::Store do
         expect(st.directory?).to eq true
       end
     end
+  end
+
+  it 'should create a location based on a path and type' do
+    s = ExampleStore.new @tempdir
+    expect(s.send(:location)).to eq @path
+  end
+
+  it 'should create a directory name based on a digest' do
+    digest = OpenSSL::Digest::SHA256.new.digest.unpack("H*")[0]
+    s = ExampleStore.new @tempdir
+    expect(s.send(:dirname, digest)).to eq File.join(@path, digest[0..1])
+  end
+
+  it 'should create a directory name based on a test message digest' do
+    digest = OpenSSL::Digest::SHA256.new.digest.unpack("H*")[0]
+    msg = TestMessage.new digest
+    s = ExampleStore.new @tempdir
+    expect(s.send(:dirname, msg)).to eq File.join(@path, digest[0..1])
+  end
+
+  it 'should create a filename based on a test message digest' do
+    digest = OpenSSL::Digest::SHA256.new.digest.unpack("H*")[0]
+    msg = TestMessage.new digest
+    s = ExampleStore.new @tempdir
+    expect(s.send(:filename, msg)).to eq File.join(@path, digest[0..1],
+                                                   digest[2..-1])
   end
 end
