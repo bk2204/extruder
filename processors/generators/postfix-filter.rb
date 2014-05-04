@@ -14,6 +14,7 @@ module Extruder
       def initialize(params)
         @netmask_threshold = params["netmask_threshold"]
         @reject_reason = params["reject_reason"]
+        @aggressive = params["aggressive"]
       end
 
       def postprocess(msgs, results)
@@ -43,9 +44,12 @@ module Extruder
       # for each range in that set:
       #
       #   * If another range we've already seen subsumes it, do nothing.
-      #   * Otherwise, if this range subsumes one we've already seen and this
-      #     one has more items than the other one, remove the other one and add
-      #     this one.
+      #   * Otherwise, if this range subsumes one we've already seen, we're in
+      #     aggressive mode, and this one has more items than the other one,
+      #     remove the other one and add this one.
+      #   * Otherwise, if this range subsumes one we've already seen, we're not
+      #     in aggressive mode, and this one has at least @netmask_threshold
+      #     items than the other one, remove the other one and add this one.
       #   * Otherwise, if this range subsumes one we've already seen and it has
       #     the same number of items, do nothing.
       #   * Otherwise, this is a unique range, and we should add it one.
@@ -65,7 +69,10 @@ module Extruder
               ignore = true
               break
             elsif r.include?(s)
-              if range_map[r].size > range_map[s].size
+              if @aggressive && range_map[r].size > range_map[s].size
+                minimized.delete(s)
+              elsif !@aggressive &&
+                  range_map[r].size >= range_map[s].size + @netmask_threshold
                 minimized.delete(s)
               else
                 ignore = true
