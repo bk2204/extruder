@@ -127,7 +127,6 @@ module Extruder
     # @param klass the processor class object
     # @param name [String, Symbol] an identifier by which the processor can be
     #   looked up
-    # @param type [:generator, :processor, :parser] the type of processor
     def register(klass, name)
       @processors[name] = klass
     end
