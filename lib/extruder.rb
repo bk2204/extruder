@@ -14,6 +14,9 @@ module Extruder
 
     # Load the configuration from the given file, or if no file is given, the
     # default configuration file.
+    #
+    # @param filename [String] the name of the file to load
+    # @param options [Hash] additional per-invocation options
     def initialize(filename = nil, options = {})
       if filename.nil?
         filename = '/etc/extruder/extruder.conf'
