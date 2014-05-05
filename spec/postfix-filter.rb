@@ -44,4 +44,28 @@ describe Extruder::Generator::PostfixFilterProcessor do
     result = Set.new([IPAddr.new("192.168.2.0/24")])
     expect(p.send(:compute_minimal_ranges, range_map)).to eq result
   end
+
+  it "does not promote below the threshold when not aggressive" do
+    p = Extruder::Generator::PostfixFilterProcessor.new({ "netmask_threshold" => 3})
+    range_map = {
+      IPAddr.new("192.168.2.1/32") => [1, 2, 3],
+      IPAddr.new("192.168.2.254/32") => [4],
+      IPAddr.new("192.168.2.128/25") => [5],
+    }
+    range_map[IPAddr.new("192.168.2.0/24")] = [1, 2, 3, 4, 5]
+    result = Set.new([IPAddr.new("192.168.2.1/32")])
+    expect(p.send(:compute_minimal_ranges, range_map)).to eq result
+  end
+
+  it "promotes below the threshold when aggressive" do
+    p = Extruder::Generator::PostfixFilterProcessor.new({ "netmask_threshold" => 3, "aggressive" => true})
+    range_map = {
+      IPAddr.new("192.168.2.1/32") => [1, 2, 3],
+      IPAddr.new("192.168.2.254/32") => [4],
+      IPAddr.new("192.168.2.128/25") => [5],
+    }
+    range_map[IPAddr.new("192.168.2.0/24")] = [1, 2, 3, 4, 5]
+    result = Set.new([IPAddr.new("192.168.2.0/24")])
+    expect(p.send(:compute_minimal_ranges, range_map)).to eq result
+  end
 end
