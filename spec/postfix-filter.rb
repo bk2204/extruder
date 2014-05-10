@@ -89,9 +89,8 @@ describe Extruder::Generator::PostfixFilterProcessor do
     reason = "junk"
     p = Extruder::Generator::PostfixFilterProcessor.new({ "netmask_threshold" => 1, "reject_reason" => reason})
     p.postprocess([], metadata)
-    expected = ranges.map do |r|
-      "#{r}\t\tREJECT #{reason} (#{r})"
+    ranges.zip(p.output.flatten).each do |(r, line)|
+      expect(line).to match(/\A#{r}\s+REJECT\s+#{reason}\s+\(#{r}\)/)
     end
-    expect(p.output.flatten).to eq expected
   end
 end
