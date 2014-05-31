@@ -1,0 +1,96 @@
+#!/usr/bin/ruby
+
+$:.unshift File.join(File.dirname(__FILE__), '..', 'lib')
+$:.unshift File.join(File.dirname(__FILE__), '..', 'processors')
+
+require 'optparse'
+require 'extruder'
+require 'extruder/mail'
+
+def field(msg, metadata, field)
+  case field
+  when "digest"
+    msg.digest_as_hex
+  else
+    pieces = field.split('.')
+    data = metadata
+    pieces.each { |f| data = data[f.to_sym] rescue nil }
+    data
+  end
+end
+
+options = {
+  fields: [],
+  expr: 'false',
+  sep: ' '
+}
+process = nil
+split_on = "\n"
+
+OptionParser.new do |opts|
+  opts.banner = 'Usage: extruder-process [-q [-c config-file] | -F [-0]]'
+
+  opts.on('-c', '--config-file CONFIG-FILE') do |file|
+    options[:config] = file
+  end
+
+  opts.on('-f', '--field FIELD') do |field|
+    options[:fields] << field
+  end
+
+  opts.on('-e', '--expression EXPR') do |expr|
+    options[:expr] = expr
+  end
+
+  opts.on('-s', '--separator SEPARATOR') do |sep|
+    options[:sep] = sep
+  end
+
+  opts.on('-m', '--messages') do
+    options[:fields] = nil
+  end
+
+  opts.on('-q', '--queue') do
+    process = 'queue'
+  end
+
+  opts.on('-F', '--from-file') do
+    process = 'file'
+  end
+end.parse!
+
+config = Extruder::Config.new options[:config], options
+case process
+  when 'queue'
+    items = Extruder::Queue.new config.location(:queue)
+  when 'file'
+    files = $stdin.read.split(split_on)
+    items = files.map { |f| Extruder::Message.new File.open(f), {} }
+  else
+    files = ARGV
+    items = files.map { |f| Extruder::Message.new File.open(f), {} }
+end
+
+runner = Extruder::QueueRunner.new config
+runner.run(items)
+
+items.each do |msg|
+  m = msg.metadata
+  selected = eval options[:expr]
+  if selected
+    if options[:fields].nil?
+      sender = msg.message.sender || msg.message.from || '???@???'
+      sender = sender[0] if sender.is_a? Array
+      om = msg.original_message
+      if om.start_with? "From "
+        puts om
+      else
+        time = Time.now.utc.strftime("%a %b %e %H:%M:%S %Y")
+        puts "From #{sender} #{time}"
+        puts om.gsub(/^(>*From )/, '>\1')
+      end
+    else
+      puts options[:fields].map { |f| field(msg, m, f) }.join(options[:sep])
+    end
+  end
+end
