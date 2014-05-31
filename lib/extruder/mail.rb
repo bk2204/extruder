@@ -2,7 +2,7 @@ require 'mail'
 
 module Extruder
   class Message
-    attr_accessor :metadata, :digest
+    attr_accessor :metadata, :digest, :original_message
     attr_writer :message
 
     def initialize(msg, metadata, digest = nil)
@@ -17,11 +17,13 @@ module Extruder
 
     def message
       if @message.is_a?(String)
+        @original_message = @message
         @message = Mail.read_from_string(@message)
       elsif @message.is_a?(Mail::Message)
         @message
       elsif @message.respond_to? :read
-        @message = Mail.read_from_string(@message.read)
+        @original_message = @message.read
+        @message = Mail.read_from_string(@original_message)
       end
     end
 
