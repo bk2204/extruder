@@ -17,7 +17,7 @@ module Extruder
         @aggressive = params["aggressive"]
       end
 
-      def postprocess(msgs, results)
+      def postprocess(_msgs, results)
         minimized = compute_minimal_ranges(results[:address_ranges])
 
         minimized.sort.each do |r|

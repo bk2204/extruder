@@ -8,7 +8,7 @@ module Extruder
       def initialize_metadata(msg)
         if !msg.metadata.key?(:received)
           msg.metadata[:received] = []
-          message_count(msg).times { |i| msg.metadata[:received] << {} }
+          message_count(msg).times { msg.metadata[:received] << {} }
         end
       end
 

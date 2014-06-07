@@ -10,7 +10,7 @@ module Extruder
       # Group messages by the IP address ranges their origin server falls into.
       # Only consider /16s and smaller, since we aren't interested in blocking
       # the entire Internet.
-      def postprocess(msgs, results)
+      def postprocess(msgs, _results)
         groups = {}
         msgs.each do |m|
           os = m.metadata[:originserver]
