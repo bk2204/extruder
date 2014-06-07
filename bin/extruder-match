@@ -76,7 +76,10 @@ runner.run(items)
 
 items.each do |msg|
   m = msg.metadata
-  selected = eval options[:expr]
+
+  # This is specifically designed so the end user can write an arbitrary
+  # expression.  Clearly this program should not be run with untrusted input.
+  selected = eval options[:expr] # rubocop: disable Lint/Eval
   if selected
     if options[:fields].nil?
       sender = msg.message.sender || msg.message.from || '???@???'
