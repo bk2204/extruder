@@ -39,7 +39,8 @@ describe Extruder::Generator::PostfixFilterProcessor do
     p = Extruder::Generator::PostfixFilterProcessor.new({})
     (0..32).each do |n|
       x = (0xffffffff << n) & 0xffffffff
-      expect(p.send(:compute_prefix, x)).to eq (32 - n)
+      prefix = 32 - n
+      expect(p.send(:compute_prefix, x)).to eq prefix
     end
   end
 
