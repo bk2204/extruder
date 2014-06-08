@@ -82,12 +82,13 @@ items.each do |msg|
   selected = eval options[:expr] # rubocop: disable Lint/Eval
   if selected
     if options[:fields].nil?
-      sender = msg.message.sender || msg.message.from || '???@???'
-      sender = sender[0] if sender.is_a? Array
       om = msg.original_message
       if om.start_with? "From "
         puts om
       else
+        sender = msg.message.sender || msg.message.from || '???@???'
+        sender = sender[0] if sender.is_a? Array
+
         time = Time.now.utc.strftime("%a %b %e %H:%M:%S %Y")
         puts "From #{sender} #{time}"
         puts om.gsub(/^(>*From )/, '>\1')
