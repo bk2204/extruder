@@ -46,6 +46,10 @@ OptionParser.new do |opts|
     options[:sep] = sep
   end
 
+  opts.on('-S', '--dummy-sender [SENDER]') do |sender|
+    options[:sender] = sender || '???@???'
+  end
+
   opts.on('-m', '--messages') do
     options[:fields] = nil
   end
@@ -86,7 +90,8 @@ items.each do |msg|
       if om.start_with? "From "
         puts om
       else
-        sender = msg.message.sender || msg.message.from || '???@???'
+        sender = options[:sender] || msg.message.sender || msg.message.from ||
+          '???@???'
         sender = sender[0] if sender.is_a? Array
 
         time = Time.now.utc.strftime("%a %b %e %H:%M:%S %Y")
