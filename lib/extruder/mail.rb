@@ -6,7 +6,7 @@ module Extruder
     attr_writer :message
 
     def initialize(msg, metadata, digest = nil)
-      @message = msg
+      @msg = msg
       @metadata = metadata
       set_digest(msg, digest)
     end
@@ -16,18 +16,31 @@ module Extruder
     end
 
     def message
-      if @message.is_a?(String)
-        @original_message = @message
-        @message = Mail.read_from_string(@message)
-      elsif @message.is_a?(Mail::Message)
-        @message
-      elsif @message.respond_to? :read
-        @original_message = @message.read
-        @message = Mail.read_from_string(@original_message)
+      return @message unless @message.nil?
+
+      if @msg.is_a?(Mail::Message)
+        @message = @msg
+      else
+        @message = Mail.read_from_string(string_message)
       end
     end
 
+    def original_message
+      return @original_message unless @original_message.nil?
+
+      @original_message = string_message
+    end
+
     private
+
+    def string_message
+      if @msg.is_a?(String)
+        @msg
+      elsif @msg.respond_to? :read
+        @msg = @msg.read
+      end
+    end
+
     def set_digest(msg, digest)
       if digest.nil?
         if msg.is_a?(String)
