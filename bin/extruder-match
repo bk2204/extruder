@@ -75,9 +75,6 @@ case process
     items = files.map { |f| Extruder::Message.new File.open(f), {} }
 end
 
-runner = Extruder::QueueRunner.new config
-runner.run(items)
-
 items.each do |msg|
   m = msg.metadata
 
