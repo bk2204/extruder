@@ -11,6 +11,8 @@ def selected_items(items, options)
   tag = options[:cache_tag]
   cached = options[:cached]
 
+  return items if cached.nil?
+
   # If no tag is provided, select every item; otherwise, select all items
   # where the tag matches if cached is true, and every item where the tag
   # does not match if it is false.
