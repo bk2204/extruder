@@ -5,7 +5,7 @@ module Extruder
         :processor
       end
 
-      def initialize(patterns)
+      def initialize(patterns = [])
         @patterns = patterns.map { |pat| Regexp.compile(pat) }
       end
 

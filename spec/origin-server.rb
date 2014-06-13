@@ -150,4 +150,18 @@ describe Extruder::Processor::OriginServerProcessor do
     expect(metadata[:originserver]).to eq expected
     expect(metadata[:originserver].object_id).to_not eq expected.object_id
   end
+
+  it 'treats a missing list of patterns as an empty one in new' do
+    metadata = {
+      received: [
+        { rdns: 'abc.com' },
+        { rdns: 'def.net' },
+        { rdns: 'ghi.org' }
+      ]
+    }
+    msg = double(Extruder::Message, metadata: metadata)
+    expect { Extruder::Processor::OriginServerProcessor.new.process(msg) }
+      .not_to raise_error
+    expect(metadata[:originserver]).to eq metadata[:received][0]
+  end
 end
