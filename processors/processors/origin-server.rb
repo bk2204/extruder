@@ -21,13 +21,13 @@ module Extruder
 
           next unless hostname
 
-          return hop if !hop[:internal] && is_valid_target(hostname)
+          return hop if !hop[:internal] && valid_target?(hostname)
         end
 
         nil
       end
 
-      def is_valid_target(server)
+      def valid_target?(server)
         @patterns.none? { |pat| pat =~ server }
       end
     end
