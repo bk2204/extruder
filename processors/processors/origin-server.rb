@@ -10,25 +10,23 @@ module Extruder
       end
 
       def process(msg)
-        meta = msg.metadata[:received]
-
-        # The server, or false if it cannot be determined.
-        origin = nil
-        meta.each do |hop|
-          hostname = hop[:rdns] || hop[:address]
-          if origin.nil?
-            if hostname && is_valid_target(hostname)
-              origin = hop
-            elsif !hop[:internal]
-              origin = false
-            end
-          end
-        end
-
+        origin = find_origin(msg.metadata[:received])
         msg.metadata[:originserver] = origin ? origin.dup : nil
       end
 
       private
+      def find_origin(hops)
+        hops.each do |hop|
+          hostname = hop[:rdns] || hop[:address]
+
+          next unless hostname
+
+          return hop if !hop[:internal] && is_valid_target(hostname)
+        end
+
+        nil
+      end
+
       def is_valid_target(server)
         @patterns.none? { |pat| pat =~ server }
       end
