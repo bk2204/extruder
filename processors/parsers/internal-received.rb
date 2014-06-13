@@ -23,6 +23,6 @@ module Extruder
     end
 
     ProcessorRegistry.instance.register(InternalReceivedProcessor,
-                                        "internal-received")
+                                        'internal-received')
   end
 end

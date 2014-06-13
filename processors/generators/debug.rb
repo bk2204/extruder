@@ -14,6 +14,6 @@ module Extruder
       end
     end
 
-    ProcessorRegistry.instance.register(DebugProcessor, "debug")
+    ProcessorRegistry.instance.register(DebugProcessor, 'debug')
   end
 end

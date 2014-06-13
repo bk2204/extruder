@@ -29,7 +29,7 @@ module Extruder
       end
     end
 
-    ProcessorRegistry.instance.register(NetmaskProcessor, "netmask")
+    ProcessorRegistry.instance.register(NetmaskProcessor, 'netmask')
   end
 end
 

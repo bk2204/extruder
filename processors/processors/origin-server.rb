@@ -34,6 +34,6 @@ module Extruder
       end
     end
 
-    ProcessorRegistry.instance.register(OriginServerProcessor, "origin-server")
+    ProcessorRegistry.instance.register(OriginServerProcessor, 'origin-server')
   end
 end

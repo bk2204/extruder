@@ -22,7 +22,7 @@ module Extruder
 
             metadata = {}
             $~.names.each { |x| metadata[x.to_sym] = $~[x] }
-            metadata[:protocol] ||= "IPv4"
+            metadata[:protocol] ||= 'IPv4'
             metadata
           else
             nil
@@ -32,6 +32,6 @@ module Extruder
     end
 
     ProcessorRegistry.instance.register(PostfixReceivedProcessor,
-                                        "postfix-received")
+                                        'postfix-received')
   end
 end

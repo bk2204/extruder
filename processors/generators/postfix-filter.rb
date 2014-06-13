@@ -12,9 +12,9 @@ module Extruder
       end
 
       def initialize(params)
-        @netmask_threshold = params["netmask_threshold"]
-        @reject_reason = params["reject_reason"]
-        @aggressive = params["aggressive"]
+        @netmask_threshold = params['netmask_threshold']
+        @reject_reason = params['reject_reason']
+        @aggressive = params['aggressive']
       end
 
       def postprocess(_msgs, results)
@@ -87,7 +87,7 @@ module Extruder
     end
 
     ProcessorRegistry.instance.register(PostfixFilterProcessor,
-                                        "postfix-filter")
+                                        'postfix-filter')
   end
 end
 
