@@ -1,8 +1,8 @@
 #!/usr/bin/ruby
 # encoding: UTF-8
 
-$:.unshift File.join(File.dirname(__FILE__), '..', 'lib')
-$:.unshift File.join(File.dirname(__FILE__), '..', 'processors')
+$LOAD_PATH.unshift File.join(File.dirname(__FILE__), '..', 'lib')
+$LOAD_PATH.unshift File.join(File.dirname(__FILE__), '..', 'processors')
 
 require 'extruder'
 require 'processors/netmask'
