@@ -81,22 +81,22 @@ items.each do |msg|
   # This is specifically designed so the end user can write an arbitrary
   # expression.  Clearly this program should not be run with untrusted input.
   selected = eval options[:expr] # rubocop: disable Lint/Eval
-  if selected
-    if options[:fields].nil?
-      om = msg.original_message
-      if om.start_with? 'From '
-        puts om
-      else
-        sender = options[:sender] || msg.message.sender || msg.message.from ||
-          '???@???'
-        sender = sender[0] if sender.is_a? Array
 
-        time = Time.now.utc.strftime('%a %b %e %H:%M:%S %Y')
-        puts "From #{sender} #{time}"
-        puts om.gsub(/^(>*From )/, '>\1')
-      end
+  next unless selected
+  if options[:fields].nil?
+    om = msg.original_message
+    if om.start_with? 'From '
+      puts om
     else
-      puts options[:fields].map { |f| field(msg, m, f) }.join(options[:sep])
+      sender = options[:sender] || msg.message.sender || msg.message.from ||
+        '???@???'
+      sender = sender[0] if sender.is_a? Array
+
+      time = Time.now.utc.strftime('%a %b %e %H:%M:%S %Y')
+      puts "From #{sender} #{time}"
+      puts om.gsub(/^(>*From )/, '>\1')
     end
+  else
+    puts options[:fields].map { |f| field(msg, m, f) }.join(options[:sep])
   end
 end
