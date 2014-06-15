@@ -9,9 +9,9 @@ require 'extruder'
 options = {}
 
 OptionParser.new do |opts|
-  opts.banner = "Usage: extruder-inject [-c config-file] [-t tag]..."
+  opts.banner = 'Usage: extruder-inject [-c config-file] [-t tag]...'
 
-  opts.on("-c", "--config-file CONFIG-FILE") do |file|
+  opts.on('-c', '--config-file CONFIG-FILE') do |file|
     options[:config] = file
   end
 end.parse!

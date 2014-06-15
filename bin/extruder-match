@@ -9,7 +9,7 @@ require 'extruder/mail'
 
 def field(msg, metadata, field)
   case field
-  when "digest"
+  when 'digest'
     msg.digest_as_hex
   else
     pieces = field.split('.')
@@ -84,14 +84,14 @@ items.each do |msg|
   if selected
     if options[:fields].nil?
       om = msg.original_message
-      if om.start_with? "From "
+      if om.start_with? 'From '
         puts om
       else
         sender = options[:sender] || msg.message.sender || msg.message.from ||
           '???@???'
         sender = sender[0] if sender.is_a? Array
 
-        time = Time.now.utc.strftime("%a %b %e %H:%M:%S %Y")
+        time = Time.now.utc.strftime('%a %b %e %H:%M:%S %Y')
         puts "From #{sender} #{time}"
         puts om.gsub(/^(>*From )/, '>\1')
       end
