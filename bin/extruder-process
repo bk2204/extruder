@@ -6,6 +6,7 @@ $LOAD_PATH.unshift File.join(File.dirname(__FILE__), '..', 'processors')
 require 'optparse'
 require 'extruder'
 require 'extruder/mail'
+require 'extruder/script'
 
 def selected_items(items, options)
   tag = options[:cache_tag]
@@ -25,9 +26,9 @@ options = {
   config: [],
   processors: [],
   save: false,
+  split_on: "\n"
 }
 process = nil
-split_on = "\n"
 
 OptionParser.new do |opts|
   opts.banner = 'Usage: extruder-process [-q [-c config-file] | -F [-0]]'
@@ -65,21 +66,11 @@ OptionParser.new do |opts|
   end
 
   opts.on('-0') do
-    split_on = "\0"
+    options[:split_on] = "\0"
   end
 end.parse!
 
-config = Extruder::Config.new options[:config], options
-case process
-  when 'queue'
-    items = Extruder::Queue.new config.location(:queue)
-  when 'file'
-    files = $stdin.read.split(split_on)
-    items = files.map { |f| Extruder::Message.new File.open(f), {} }
-  else
-    files = ARGV
-    items = files.map { |f| Extruder::Message.new File.open(f), {} }
-end
+config, items = Extruder::Script.process_items(options, process)
 
 runner = Extruder::QueueRunner.new config
 runner.run(selected_items(items, options))
