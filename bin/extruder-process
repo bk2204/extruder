@@ -75,6 +75,4 @@ config, items = Extruder::Script.process_items(options, process)
 runner = Extruder::QueueRunner.new config
 runner.run(selected_items(items, options))
 
-if options[:save]
-  items.save_metadata
-end
+items.save_metadata if options[:save]
