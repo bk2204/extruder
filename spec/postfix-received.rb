@@ -20,6 +20,20 @@ Received: from mx1.example.tld (mail.example.tld [198.51.100.10])
 Message
 EOM
 
+message_data = {
+  heloname: 'mx1.example.tld',
+  rdns: 'mail.example.tld',
+  protocol: 'IPv4',
+  address: '198.51.100.10',
+  tlsprotocol: 'TLSv1',
+  tlscipher: 'DHE-RSA-AES256-SHA',
+  server: 'mx1.sample.tld',
+  smtpprotocol: 'ESMTPS',
+  queueid: '65C4B2808E',
+  destaddress: 'user@sample.tld',
+  date: 'Wed, 18 Jun 2014 16:55:10 +0000'
+}
+
 describe Extruder::Parser::PostfixReceivedProcessor do
   it 'has the correct type' do
     expect(Extruder::Parser::PostfixReceivedProcessor.type).to eq :parser
@@ -38,23 +52,36 @@ describe Extruder::Parser::PostfixReceivedProcessor do
   it 'can parse a basic Postfix header' do
     metadata = {}
     expected = {
-      received: [
-        {
-          heloname: 'mx1.example.tld',
-          rdns: 'mail.example.tld',
-          protocol: 'IPv4',
-          address: '198.51.100.10',
-          tlsprotocol: 'TLSv1',
-          tlscipher: 'DHE-RSA-AES256-SHA',
-          server: 'mx1.sample.tld',
-          smtpprotocol: 'ESMTPS',
-          queueid: '65C4B2808E',
-          destaddress: 'user@sample.tld',
-          date: 'Wed, 18 Jun 2014 16:55:10 +0000'
-        }
-      ]
+      received: [message_data]
     }
     m = Extruder::Message.new(message, metadata)
+    p = Extruder::Parser::PostfixReceivedProcessor.new
+    p.process(m)
+    expect(metadata).to eq expected
+  end
+
+  it 'ignores non-Postfix headers' do
+    metadata = {}
+    expected = {
+      received: [{}]
+    }
+    msg = message.gsub('(Postfix)', '')
+    m = Extruder::Message.new(msg, metadata)
+    p = Extruder::Parser::PostfixReceivedProcessor.new
+    p.process(m)
+    expect(metadata).to eq expected
+  end
+
+  it 'can handle both Postfix and non-Postfix headers' do
+    metadata = {}
+    expected = {
+      received: [message_data, {}]
+    }
+    msg = message.sub(/(Received:.*\n)\n/m) do
+      hdr = Regexp.last_match[1]
+      hdr + hdr.sub('(Postfix)', '') + "\n"
+    end
+    m = Extruder::Message.new(msg, metadata)
     p = Extruder::Parser::PostfixReceivedProcessor.new
     p.process(m)
     expect(metadata).to eq expected
