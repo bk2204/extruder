@@ -67,7 +67,7 @@ module Extruder
     include Enumerable
 
     def each
-      if !@messages.nil?
+      unless @messages.nil?
         @messages.each { |x| yield x }
         return
       end
