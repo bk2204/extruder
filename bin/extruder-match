@@ -15,7 +15,7 @@ def field(msg, metadata, field)
   else
     pieces = field.split('.')
     data = metadata
-    pieces.each { |f| data = data[f.to_sym] rescue nil }
+    pieces.each { |f| data = data.is_a?(Hash) ? data[f.to_sym] : nil }
     data
   end
 end
