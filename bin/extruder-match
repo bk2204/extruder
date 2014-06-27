@@ -15,7 +15,16 @@ def field(msg, metadata, field)
   else
     pieces = field.split('.')
     data = metadata
-    pieces.each { |f| data = data.is_a?(Hash) ? data[f.to_sym] : nil }
+    pieces.each do |f|
+      data = case data
+      when Hash
+        data[f.to_sym]
+      when Array
+        data[f.to_i]
+      else
+        nil
+      end
+    end
     data
   end
 end
