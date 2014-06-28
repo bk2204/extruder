@@ -4,6 +4,7 @@
 $LOAD_PATH.unshift File.join(File.dirname(__FILE__), '..', 'lib')
 
 require 'tempfile'
+require 'stringio'
 
 require 'extruder'
 
@@ -11,7 +12,7 @@ describe Extruder::Config do
   before(:all) do
     @proc_location = File.join(File.dirname(__FILE__), '..', 'processors')
     @tempfile = Tempfile.new('config')
-    @tempfile.print <<EOM
+    text = <<EOM
 ---
 locations:
   queue: /nonexistent
@@ -20,11 +21,20 @@ processors:
   -
     name: netmask
 EOM
+    @tempfile.print text
+    @stringio = StringIO.new(text)
     @tempfile.flush
   end
 
   it 'should be able to load a YAML configuration file' do
     c = Extruder::Config.new(@tempfile.path)
+    expect(c.location(:queue)).to eq '/nonexistent'
+    expect(c.location(:processors)).to eq @proc_location
+    expect(c.processors).to eq [{name: 'netmask'}]
+  end
+
+  it 'should be able to load a YAML configuration from an IO object' do
+    c = Extruder::Config.new(@stringio)
     expect(c.location(:queue)).to eq '/nonexistent'
     expect(c.location(:processors)).to eq @proc_location
     expect(c.processors).to eq [{name: 'netmask'}]

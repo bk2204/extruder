@@ -15,14 +15,13 @@ module Extruder
     # Load the configuration from the given file, or if no file is given, the
     # default configuration file.
     #
-    # @param filename [String] the name of the file to load
+    # @param file [String or IO] the name of the file to load (or an IO object)
     # @param options [Hash] additional per-invocation options
-    def initialize(filename = nil, options = {})
-      if filename.nil?
-        filename = '/etc/extruder/extruder.conf'
-      end
+    def initialize(file = nil, options = {})
+      file = '/etc/extruder/extruder.conf' if file.nil?
+      file = File.new(file, 'r') unless file.respond_to? :read
 
-      config = YAML.load_file(filename)
+      config = YAML.load(file)
       @locations = {}
       [:queue, :processors].each { |x|
         @locations[x] = config['locations'][x.to_s]
