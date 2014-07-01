@@ -108,7 +108,7 @@ module Extruder
       destination = "#{@location}/#{@type}/#{dir}/#{name}"
       File.rename(file.path, destination)
       metafile = Tempfile.new('metadata', "#{@location}/#{@type}/tmp")
-      metafile << JSON.generate({tags: tags})
+      metafile << JSON.generate(tags: tags)
       File.rename(metafile.path, "#{destination}.meta")
     end
   end
