@@ -87,4 +87,10 @@ EOM
     m = Extruder::Message.new(io, {}, @hex_digest)
     expect(m.message).to be_a Mail::Message
   end
+
+  it 'should return the original message when asked' do
+    io = StringIO.new(@message)
+    m = Extruder::Message.new(io, {}, @hex_digest)
+    expect(m.original_message).to eq @message
+  end
 end
