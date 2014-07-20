@@ -53,7 +53,7 @@ EOM
 
   it 'should raise an exception if the file does not exist' do
     expect {
-      Extruder::Config.new("/nonexistent")
+      Extruder::Config.new('/nonexistent')
     }.to raise_error Errno::ENOENT
   end
 end

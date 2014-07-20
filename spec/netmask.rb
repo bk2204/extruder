@@ -16,22 +16,22 @@ Message
 EOM
 
 describe Extruder::Processor::NetmaskProcessor do
-  it "has the correct type" do
+  it 'has the correct type' do
     expect(Extruder::Processor::NetmaskProcessor.type).to eq :processor
   end
 
-  it "can postprocess" do
+  it 'can postprocess' do
     p = Extruder::Processor::NetmaskProcessor.new
     expect(p).to respond_to(:postprocess).with(2).arguments
   end
 
-  it "cannot process" do
+  it 'cannot process' do
     p = Extruder::Processor::NetmaskProcessor.new
     expect(p).not_to respond_to(:process)
   end
 
-  it "can extract an IPv4 address from message metadata" do
-    ip = "192.168.2.1"
+  it 'can extract an IPv4 address from message metadata' do
+    ip = '192.168.2.1'
     metadata = { originserver: { address: ip } }
     m = Extruder::Message.new(message, metadata)
     p = Extruder::Processor::NetmaskProcessor.new
@@ -41,8 +41,8 @@ describe Extruder::Processor::NetmaskProcessor do
     expect(p.postprocess([m], nil)).to eq expected
   end
 
-  it "can extract an IPv4 address from message metadata" do
-    ip = "fe80::15"
+  it 'can extract an IPv4 address from message metadata' do
+    ip = 'fe80::15'
     metadata = { originserver: { address: ip } }
     m = Extruder::Message.new(message, metadata)
     p = Extruder::Processor::NetmaskProcessor.new

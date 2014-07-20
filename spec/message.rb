@@ -21,7 +21,7 @@ EOM
     hash << @message
     @digest = hash.digest
     @parsed = Mail.read_from_string(@message)
-    @hex_digest = @digest.unpack("H*")[0]
+    @hex_digest = @digest.unpack('H*')[0]
   end
 
   it 'should be able to be initialized with a string' do

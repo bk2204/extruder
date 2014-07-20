@@ -59,20 +59,20 @@ describe Extruder::Store do
   end
 
   it 'should create a directory name based on a digest' do
-    digest = OpenSSL::Digest::SHA256.new.digest.unpack("H*")[0]
+    digest = OpenSSL::Digest::SHA256.new.digest.unpack('H*')[0]
     s = ExampleStore.new @tempdir
     expect(s.send(:dirname, digest)).to eq File.join(@path, digest[0..1])
   end
 
   it 'should create a directory name based on a test message digest' do
-    digest = OpenSSL::Digest::SHA256.new.digest.unpack("H*")[0]
+    digest = OpenSSL::Digest::SHA256.new.digest.unpack('H*')[0]
     msg = TestMessage.new digest
     s = ExampleStore.new @tempdir
     expect(s.send(:dirname, msg)).to eq File.join(@path, digest[0..1])
   end
 
   it 'should create a filename based on a test message digest' do
-    digest = OpenSSL::Digest::SHA256.new.digest.unpack("H*")[0]
+    digest = OpenSSL::Digest::SHA256.new.digest.unpack('H*')[0]
     msg = TestMessage.new digest
     s = ExampleStore.new @tempdir
     expect(s.send(:filename, msg)).to eq File.join(@path, digest[0..1],

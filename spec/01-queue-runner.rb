@@ -35,7 +35,7 @@ EOM
     x1 = Extruder::ProcessorRegistry.instance
     to_include = nil
     expect {
-      to_include = [["netmask", Extruder::Processor::NetmaskProcessor]]
+      to_include = [['netmask', Extruder::Processor::NetmaskProcessor]]
     }.not_to raise_error
     expect(x1).to include(*to_include)
   end
