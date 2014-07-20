@@ -26,9 +26,7 @@ module Extruder
     end
 
     def original_message
-      return @original_message unless @original_message.nil?
-
-      @original_message = string_message
+      @original_message ||= string_message
     end
 
     private
