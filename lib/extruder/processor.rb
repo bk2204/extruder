@@ -35,9 +35,9 @@ module Extruder
     def postprocess(items)
       results = {}
       @processors.each do |processor|
-        if processor.respond_to? :postprocess
-          results.merge!(processor.postprocess(items, results) || {})
-        end
+        next unless processor.respond_to? :postprocess
+
+        results.merge!(processor.postprocess(items, results) || {})
       end
     end
 
