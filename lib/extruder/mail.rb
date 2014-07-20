@@ -46,17 +46,17 @@ module Extruder
           hash << msg
           @digest = hash.digest
         else
-          fail InvalidDigestError.new "a digest is required"
+          fail InvalidDigestError.new 'a digest is required'
         end
       elsif digest.length == 32
         @digest = digest
       elsif digest.length == 64
         if digest !~ /\A[a-fA-F0-9]{64}\z/
-          fail InvalidDigestError.new "digest must be a valid SHA-256 value"
+          fail InvalidDigestError.new 'digest must be a valid SHA-256 value'
         end
-        @digest = [digest].pack("H*")
+        @digest = [digest].pack('H*')
       else
-        fail InvalidDigestError.new "digest must be a valid SHA-256 value"
+        fail InvalidDigestError.new 'digest must be a valid SHA-256 value'
       end
     end
   end
@@ -73,7 +73,7 @@ module Extruder
       @messages = []
 
       (0..255).each do |x|
-        piece = "%02x" % x
+        piece = '%02x' % x
         dir = Dir.new(dirname(piece))
         json_opts = {create_additions: false, symbolize_names: true}
 
@@ -93,7 +93,7 @@ module Extruder
       return unless @messages
 
       @messages.each do |m|
-        f = File.new("#{filename(m)}.meta", "w")
+        f = File.new("#{filename(m)}.meta", 'w')
         JSON.dump(m.metadata, f)
       end
     end
