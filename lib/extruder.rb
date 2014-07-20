@@ -91,7 +91,7 @@ module Extruder
     end
 
     def inject(item, tags)
-      file = Tempfile.new('item', "#{@location}/queue/tmp")
+      file = Tempfile.new('item', File.join(@location, 'queue', 'tmp'))
       digest = OpenSSL::Digest::SHA256.new
       if item.respond_to?(:each)
         item.each { |x|
@@ -105,9 +105,9 @@ module Extruder
       end
       hexdigest = digest.digest.unpack('H*')[0]
       dir, name = hexdigest[0..1], hexdigest[2..64]
-      destination = "#{@location}/#{@type}/#{dir}/#{name}"
+      destination = File.join(@location, @type, dir, name)
       File.rename(file.path, destination)
-      metafile = Tempfile.new('metadata', "#{@location}/#{@type}/tmp")
+      metafile = Tempfile.new('metadata', File.join(@location, @type, 'tmp'))
       metafile << JSON.generate(tags: tags)
       File.rename(metafile.path, "#{destination}.meta")
     end
