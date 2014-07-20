@@ -46,17 +46,17 @@ module Extruder
           hash << msg
           @digest = hash.digest
         else
-          fail InvalidDigestError.new 'a digest is required'
+          fail InvalidDigestError, 'a digest is required'
         end
       elsif digest.length == 32
         @digest = digest
       elsif digest.length == 64
         if digest !~ /\A[a-fA-F0-9]{64}\z/
-          fail InvalidDigestError.new 'digest must be a valid SHA-256 value'
+          fail InvalidDigestError, 'digest must be a valid SHA-256 value'
         end
         @digest = [digest].pack('H*')
       else
-        fail InvalidDigestError.new 'digest must be a valid SHA-256 value'
+        fail InvalidDigestError, 'digest must be a valid SHA-256 value'
       end
     end
   end
