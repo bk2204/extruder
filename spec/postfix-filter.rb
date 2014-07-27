@@ -45,7 +45,7 @@ describe Extruder::Generator::PostfixFilterProcessor do
   end
 
   it 'can compute a set of minimal IPv4 ranges' do
-    p = Extruder::Generator::PostfixFilterProcessor.new({ 'netmask_threshold' => 1})
+    p = Extruder::Generator::PostfixFilterProcessor.new('netmask_threshold' => 1)
     range_map = {}
     [
       '192.168.2.1/32',
@@ -60,7 +60,7 @@ describe Extruder::Generator::PostfixFilterProcessor do
   end
 
   it 'does not promote below the threshold when not aggressive' do
-    p = Extruder::Generator::PostfixFilterProcessor.new({ 'netmask_threshold' => 3})
+    p = Extruder::Generator::PostfixFilterProcessor.new('netmask_threshold' => 3)
     range_map = {
       IPAddr.new('192.168.2.1/32') => [1, 2, 3],
       IPAddr.new('192.168.2.254/32') => [4],
@@ -72,7 +72,7 @@ describe Extruder::Generator::PostfixFilterProcessor do
   end
 
   it 'promotes below the threshold when aggressive' do
-    p = Extruder::Generator::PostfixFilterProcessor.new({ 'netmask_threshold' => 3, 'aggressive' => true})
+    p = Extruder::Generator::PostfixFilterProcessor.new('netmask_threshold' => 3, 'aggressive' => true)
     range_map = {
       IPAddr.new('192.168.2.1/32') => [1, 2, 3],
       IPAddr.new('192.168.2.254/32') => [4],
@@ -88,7 +88,7 @@ describe Extruder::Generator::PostfixFilterProcessor do
     metadata = {address_ranges: {}}
     ranges.each { |r| metadata[:address_ranges][IPAddr.new(r)] = [1, 2, 3] }
     reason = 'junk'
-    p = Extruder::Generator::PostfixFilterProcessor.new({ 'netmask_threshold' => 1, 'reject_reason' => reason})
+    p = Extruder::Generator::PostfixFilterProcessor.new('netmask_threshold' => 1, 'reject_reason' => reason)
     p.postprocess([], metadata)
     ranges.zip(p.output.flatten).each do |(r, line)|
       expect(line).to match(/\A#{r}\s+REJECT\s+#{reason}\s+\(#{r}\)/)

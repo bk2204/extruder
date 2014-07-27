@@ -26,19 +26,19 @@ EOM
 
   it 'should be able to be initialized with a string' do
     expect {
-      Extruder::Message.new(@message, {tags: %w(a b c)})
+      Extruder::Message.new(@message, tags: %w(a b c))
     }.not_to raise_error
   end
 
   it 'should compute the digest automatically when initialized with a string' do
-    m = Extruder::Message.new(@message, {tags: %w(a b c)})
+    m = Extruder::Message.new(@message, tags: %w(a b c))
     expect(m.digest).to eq @digest
     expect(m.digest_as_hex).to eq @hex_digest
   end
 
   it 'should raise an exception when digest is missing' do
     expect {
-      Extruder::Message.new(@parsed, {tags: %w(a b c)})
+      Extruder::Message.new(@parsed, tags: %w(a b c))
     }.to raise_error Extruder::InvalidDigestError
   end
 

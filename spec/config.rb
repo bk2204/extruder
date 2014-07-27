@@ -47,7 +47,7 @@ EOM
 
   it 'should return a cache tag when one is provided' do
     tag = 'abcdef'
-    c = Extruder::Config.new(@tempfile.path, {cache_tag: tag})
+    c = Extruder::Config.new(@tempfile.path, cache_tag: tag)
     expect(c.cache_tag).to eq tag
   end
 
