@@ -82,7 +82,7 @@ module Extruder
         files.each do |component|
           file = File.join(dir.path, component)
           metadata = JSON.load(File.new("#{file}.meta"), nil, json_opts)
-          m = Message.new File.new(file), metadata, "#{piece}#{component}"
+          m = Message.new File.new(file, 'rb'), metadata, "#{piece}#{component}"
           @messages << m
           yield m
         end
