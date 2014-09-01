@@ -12,7 +12,7 @@ module Extruder
       end
 
       files = type == 'file' ? $stdin.read.split(split_on) : ARGV
-      [config, files.map { |f| Extruder::Message.new File.open(f), {} }]
+      [config, files.map { |f| Extruder::Message.new File.new(f, 'rb'), {} }]
     end
   end
 end
