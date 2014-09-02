@@ -19,7 +19,7 @@ module Extruder
     # @param options [Hash] additional per-invocation options
     def initialize(file = nil, options = {})
       file = '/etc/extruder/extruder.conf' if file.nil?
-      file = File.new(file, 'r') unless file.respond_to? :read
+      file = File.new(file, 'r:UTF-8') unless file.respond_to? :read
 
       config = YAML.load(file)
       @locations = {}

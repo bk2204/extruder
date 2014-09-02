@@ -75,13 +75,13 @@ module Extruder
       (0..255).each do |x|
         piece = '%02x' % x
         dir = Dir.new(dirname(piece))
-        json_opts = {create_additions: false, symbolize_names: true}
+        opts = {create_additions: false, symbolize_names: true}
 
         # TODO: validate the SHA-256 value.
         files = dir.each.sort.select { |file| /\A[0-9a-f]{62}\z/ =~ file }
         files.each do |component|
           file = File.join(dir.path, component)
-          metadata = JSON.load(File.new("#{file}.meta"), nil, json_opts)
+          metadata = JSON.load(File.new("#{file}.meta", 'r:UTF-8'), nil, opts)
           m = Message.new File.new(file, 'rb'), metadata, "#{piece}#{component}"
           @messages << m
           yield m
@@ -93,7 +93,7 @@ module Extruder
       return unless @messages
 
       @messages.each do |m|
-        f = File.new("#{filename(m)}.meta", 'w')
+        f = File.new("#{filename(m)}.meta", 'w:UTF-8')
         JSON.dump(m.metadata, f)
       end
     end
