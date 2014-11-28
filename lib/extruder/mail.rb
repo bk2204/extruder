@@ -1,6 +1,19 @@
 require 'mail'
 
 module Extruder
+  class FileStub
+    def initialize(file, mode)
+      @file = file
+      @mode = mode
+      @obj = nil
+    end
+
+    def file
+      return @obj if obj
+      @obj = File.new(@file, @mode)
+    end
+  end
+
   class Message
     attr_accessor :metadata, :digest, :original_message
     attr_writer :message
@@ -32,10 +45,17 @@ module Extruder
     private
 
     def string_message
+      load_message
       if @msg.is_a?(String)
         @msg
       elsif @msg.respond_to? :read
         @msg = @msg.read
+      end
+    end
+
+    def load_message
+      if @msg.is_a?(FileStub)
+        @msg = @msg.file
       end
     end
 
@@ -82,7 +102,8 @@ module Extruder
         files.each do |component|
           file = File.join(dir.path, component)
           metadata = JSON.load(File.new("#{file}.meta", 'r:UTF-8'), nil, opts)
-          m = Message.new File.new(file, 'rb'), metadata, "#{piece}#{component}"
+          m = Message.new FileStub.new(file, 'rb'), metadata,
+                          "#{piece}#{component}"
           @messages << m
           yield m
         end
