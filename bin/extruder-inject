@@ -24,8 +24,8 @@ options[:tag].uniq!
 
 config = Extruder::Config.new options[:config]
 queue = Extruder::Queue.new config.location(:queue)
-if ARGV
-  ARGV.each { |f| queue.inject(File.new(f), options[:tag]) }
-else
+if ARGV.empty?
   queue.inject($stdin, options[:tag])
+else
+  ARGV.each { |f| queue.inject(File.new(f), options[:tag]) }
 end
